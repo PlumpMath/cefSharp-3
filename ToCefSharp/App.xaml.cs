@@ -13,5 +13,16 @@ namespace CefSharp
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+
+            var settings = new CefSettings();
+
+            settings.EnableInternalPdfViewerOffScreen();
+
+            settings.CefCommandLineArgs.Add("disable-gpu","1");
+
+            Cef.Initialize(settings, shutdownOnProcessExit: true, performDependencyCheck: true);
+        }
     }
 }

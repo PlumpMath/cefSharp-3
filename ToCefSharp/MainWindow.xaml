@@ -4,9 +4,33 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CefSharp"
+        xmlns:cromium="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="{Binding Path=Title, ElementName=browser, Converter={StaticResource TitleConverter}}" Height="350" Width="525">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>            
+        </Grid.RowDefinitions>
         
+        <TextBox x:Name="tbBrowser" Grid.Row="0" Background="Black" Foreground="White" CaretBrush="White" KeyUp="tbBrowser_KeyUp"/>
+
+        <cromium:ChromiumWebBrowser x:Name="browser" Grid.Row="1" ConsoleMessage="browser_ConsoleMessage" 
+                                    FrameLoadEnd="browser_FrameLoadEnd" 
+                                    FrameLoadStart="browser_FrameLoadStart" 
+                                    Initialized="browser_Initialized" 
+                                    Loaded="browser_Loaded" 
+                                    LoadingStateChanged="browser_LoadingStateChanged" 
+                                    StatusMessage="browser_StatusMessage"/>
+
+        <StatusBar Grid.Row="2">
+                        
+            <Label x:Name="lbStatus" />
+
+            <Separator/>
+
+        </StatusBar>
+
     </Grid>
 </Window>
