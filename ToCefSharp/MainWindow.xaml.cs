@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace CefSharp
@@ -20,9 +19,10 @@ namespace CefSharp
         public MainWindow()
         {
             InitializeComponent();
+            //browser.RequestHandler = new RequestHandler();                  
             var obj = this.CreateNetObject();
             //el registro se debe efectuar antes de inicializar le cefSharp. No se puede hacer en el win_loaded
-            this.RegisterJsObjecte(obj);            
+            this.RegisterJsObject(obj);            
         }
 
         private Object CreateNetObject()
@@ -50,7 +50,7 @@ namespace CefSharp
             
         }
 
-        private void RegisterJsObjecte(dynamic myNetObject)
+        private void RegisterJsObject(dynamic myNetObject)
         {
             try
             {
@@ -78,11 +78,8 @@ namespace CefSharp
         {
             WriteLog(String.Format("{4}:\r\nBrowser: {0}\r\nFrame: {1}\r\nStatusCode: {2}\r\nUrl:{3}", e.Browser, e.Frame, e.HttpStatusCode, e.Url, System.Reflection.MethodBase.GetCurrentMethod().Name));
             //hasta que no este cargado el DOM no se pueden ejecutar funciones javaScrip            
-            this.ExecuteJavaScript("showFromCS","{\"Name\":\"Salva\"}");
-            
-        }
-
-       
+            this.ExecuteJavaScript("showFromCS", "{\"Name\":\"Salva\"}");
+        }       
 
         private void browser_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
         {
@@ -96,7 +93,7 @@ namespace CefSharp
 
         private void browser_Loaded(object sender, RoutedEventArgs e)
         {
-            WriteLog(String.Format("{4}:\r\nHandled: {0}\r\nOriginalSource: {1}\r\nRoutedEvent: {2}\r\nSource:{3}", e.Handled, e.OriginalSource, e.RoutedEvent, e.Source, System.Reflection.MethodBase.GetCurrentMethod().Name));            
+            WriteLog(String.Format("{4}:\r\nHandled: {0}\r\nOriginalSource: {1}\r\nRoutedEvent: {2}\r\nSource:{3}", e.Handled, e.OriginalSource, e.RoutedEvent, e.Source, System.Reflection.MethodBase.GetCurrentMethod().Name));           
         }        
 
         private void browser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
@@ -122,6 +119,16 @@ namespace CefSharp
         private void browser_StatusMessage(object sender, StatusMessageEventArgs e)
         {
             WriteLog(String.Format("{2}:\r\nBrowser: {0}\r\nValue: {1}", e.Browser, e.Value, System.Reflection.MethodBase.GetCurrentMethod().Name));            
+        }
+
+        private void browser_SourceUpdated(object sender, System.Windows.Data.DataTransferEventArgs e)
+        {
+            WriteLog(String.Format("{0}:\r\n\t{1}", System.Reflection.MethodBase.GetCurrentMethod().Name, e.ToString()));
+        }
+
+        private void browser_GiveFeedback(object sender, GiveFeedbackEventArgs e)
+        {
+            WriteLog(String.Format("{0}:\r\n\t{1}", System.Reflection.MethodBase.GetCurrentMethod().Name, e.ToString()));
         }
 
         #endregion
@@ -159,20 +166,37 @@ namespace CefSharp
             WriteLog(String.Format("{0}", System.Reflection.MethodBase.GetCurrentMethod().Name));
             string myHtml = File.ReadAllText("HtmlTest.html");
             browser.LoadHtml(myHtml, "http://www.example.com/");
+            //browser.Address = "http://wwww.texyon.com";
+            
         }
+
 
 
         #endregion
 
-        private void browser_SourceUpdated(object sender, System.Windows.Data.DataTransferEventArgs e)
-        {
-            WriteLog(String.Format("{0}:\r\n\t{1}", System.Reflection.MethodBase.GetCurrentMethod().Name,e.ToString()));
+        #region MyCommands
+
+        private void GoForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {            
+            e.CanExecute = (browser!=null) && browser.CanGoForward;
         }
 
-        private void browser_GiveFeedback(object sender, GiveFeedbackEventArgs e)
+        private void GoBack_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            WriteLog(String.Format("{0}:\r\n\t{1}", System.Reflection.MethodBase.GetCurrentMethod().Name, e.ToString()));
+            e.CanExecute = (browser != null) && browser.CanGoBack;
         }
+
+        private void GoForward_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            browser.Forward();
+        }
+
+        private void GoBack_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            browser.Back();
+        }
+
+        #endregion
     }
 
     public class MyNetObject
@@ -197,4 +221,17 @@ namespace CefSharp
             MessageBox.Show(String.Format("Email: {0}\r\nPassword: {1}", email,password));
         }
     }
+    
+    public static class Commands
+    {
+        public static readonly RoutedUICommand GoForward = new RoutedUICommand(
+            "fasdfa",
+            "asdfadsf",
+            typeof(Commands));
+
+        public static readonly RoutedUICommand GoBack = new RoutedUICommand(
+           "asdf",
+           "asdfa",
+           typeof(Commands));
+    }   
 }

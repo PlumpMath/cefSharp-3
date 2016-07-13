@@ -8,7 +8,15 @@
         mc:Ignorable="d"
         Title="{Binding Path=Title, ElementName=browser, Converter={StaticResource TitleConverter}}"
         Height="350" Width="525"
-        Loaded="Window_Loaded" WindowState="Maximized" WindowStyle="None">
+        Loaded="Window_Loaded" WindowState="Maximized">
+
+    <Window.CommandBindings>
+        
+        <CommandBinding Command="local:Commands.GoForward" CanExecute="GoForward_CanExecute" Executed="GoForward_Executed"/>
+        
+        <CommandBinding Command="local:Commands.GoBack" CanExecute="GoBack_CanExecute" Executed="GoBack_Executed"/>
+    
+    </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -22,8 +30,11 @@
 
             <Button x:Name="StartTest" Content="StartTest" Click="StartTest_Click" Width="100"/>
 
-            <TextBox x:Name="tbBrowser" Background="Black" Foreground="White" CaretBrush="White" KeyUp="tbBrowser_KeyUp" FontWeight="Bold" FontSize="14" />           
-        
+            <Button Content="Next" Width="50" DockPanel.Dock="Right" Command="local:Commands.GoForward" />
+            <Button Content="Back" Width="50" DockPanel.Dock="Right" Command="local:Commands.GoBack"/>
+
+            <TextBox x:Name="tbBrowser" Background="Black" Foreground="White" CaretBrush="White" KeyUp="tbBrowser_KeyUp" FontWeight="Bold" FontSize="14" />
+
         </DockPanel>
         
         <cromium:ChromiumWebBrowser x:Name="browser" Grid.Row="1" ConsoleMessage="browser_ConsoleMessage" 
