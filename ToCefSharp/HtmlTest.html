@@ -7,14 +7,38 @@
 
     <title>Test cefSharp</title>
 
+    <script>
+
+        function showDate() {
+            document.getElementById("date").innerHTML = Date();
+        }
+
+        function showDataObject() {
+            yo.showData();
+        }
+
+        function showFromCS(data) {
+            var obj=JSON.stringify(data);
+            
+            document.getElementById("fromCS").innerHTML=data.Name;
+        }
+
+    </script>
 </head>
 
 <body>
 
     <h1>Hello world!!!</h1>
 
-    <p>This is a test of CefSharp</p>
+    <p>This is a test for CefSharp</p>
 
+    <p id="date"></p>
+
+    <input type="button" value="Click here!!" onclick="showDate()"/>
+
+    <p id="fromCS"></p>
+
+    <input type="button" value="And now click here!!" onclick="showDataObject()"/>
 
 </body>
 

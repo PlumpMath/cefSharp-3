@@ -6,25 +6,35 @@
         xmlns:local="clr-namespace:CefSharp"
         xmlns:cromium="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
-        Title="{Binding Path=Title, ElementName=browser, Converter={StaticResource TitleConverter}}" Height="350" Width="525">
+        Title="{Binding Path=Title, ElementName=browser, Converter={StaticResource TitleConverter}}"
+        Height="350" Width="525"
+        Loaded="Window_Loaded" WindowState="Maximized">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>            
         </Grid.RowDefinitions>
-        
-        <TextBox x:Name="tbBrowser" Grid.Row="0" Background="Black" Foreground="White" CaretBrush="White" KeyUp="tbBrowser_KeyUp"/>
 
+        <DockPanel Grid.Row="0">
+            
+            <Button x:Name="DevTools" Content="DevTools" Click="DevTools_Click" Width="100"/>
+
+            <Button x:Name="StartTest" Content="StartTest" Click="StartTest_Click" Width="100"/>
+
+            <TextBox x:Name="tbBrowser" Background="Black" Foreground="White" CaretBrush="White" KeyUp="tbBrowser_KeyUp" FontWeight="Bold" FontSize="14" />           
+        
+        </DockPanel>
+        
         <cromium:ChromiumWebBrowser x:Name="browser" Grid.Row="1" ConsoleMessage="browser_ConsoleMessage" 
                                     FrameLoadEnd="browser_FrameLoadEnd" 
                                     FrameLoadStart="browser_FrameLoadStart" 
                                     Initialized="browser_Initialized" 
                                     Loaded="browser_Loaded" 
                                     LoadingStateChanged="browser_LoadingStateChanged" 
-                                    StatusMessage="browser_StatusMessage"/>
+                                    StatusMessage="browser_StatusMessage" IsBrowserInitializedChanged="browser_IsBrowserInitializedChanged"/>
 
-        <StatusBar Grid.Row="2">
+        <StatusBar Grid.Row="2" Visibility="Collapsed">
                         
             <Label x:Name="lbStatus" />
 

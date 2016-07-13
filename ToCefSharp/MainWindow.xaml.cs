@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,51 +11,82 @@ namespace CefSharp
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        const string line = "---------------------------------------";
+        private void WriteLog(string message)
+        {
+            Console.WriteLine(message);
+            Console.WriteLine("---------------------------------------");
+        }
 
         public MainWindow()
         {
             InitializeComponent();
-
-            //browser.ExecuteScriptAsync("",null);
-
-                
+            var obj = this.CreateNetObject();
+            //el registro se debe efectuar antes de inicializar le cefSharp. No se puede hacer en el win_loaded
+            this.RegisterJsObjecte(obj);
         }
 
-        private void WriteLog(string message)
+        private Object CreateNetObject()
         {
-            Console.WriteLine(message);
-            Console.WriteLine(line);
+            return new MyNetObject("Voro", 31,"yo");
         }
 
-        private void ProgressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (e.NewValue == ((ProgressBar)sender).Maximum)
+            WriteLog(String.Format("{0}", System.Reflection.MethodBase.GetCurrentMethod().Name));
+        }       
+
+        private void ExecuteJavaScript(string methodName,string jsonData)
+        {
+            //TODO 13/07/2016: pasar un array de objetos como argumento en vez de un json. De todas formas, si se va a pasar
+            //un objeto, igual vale la pena serializarlo y pasarselo a la web como json
+            try
             {
-                lbStatus.Content = "Loaded";
-            }else if (e.NewValue == ((ProgressBar)sender).Minimum)
-            {
-                lbStatus.Content = "Waiting...";
-            }else
-            {
-                lbStatus.Content = "Loading...";
+                browser.ExecuteScriptAsync(String.Format(methodName+ "({0})",jsonData));
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
+        }
+
+        private void RegisterJsObjecte(dynamic myNetObject)
+        {
+            try
+            {
+                browser.RegisterAsyncJsObject(myNetObject.WebName, myNetObject, true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }            
+        }
+
+        #region BROWSER EVENTS
+
+        private void browser_IsBrowserInitializedChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            WriteLog(String.Format("{3}:\r\n\t{2}: {1} --> {0}", e.NewValue,e.OldValue,e.Property, System.Reflection.MethodBase.GetCurrentMethod().Name));            
         }
 
         private void browser_ConsoleMessage(object sender, ConsoleMessageEventArgs e)
         {
-            WriteLog(String.Format( "Line: {0}\r\nMessage: {1}", e.Line, e.Message));
+            WriteLog(String.Format( "{2}\r\n\tLine: {0}\r\n\tMessage: {1}", e.Line, e.Message,System.Reflection.MethodBase.GetCurrentMethod().Name));
         }
 
         private void browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
         {
-            WriteLog(String.Format("FrameLoadEnd:\r\nBrowser: {0}\r\nFrame: {1}\r\nStatusCode: {2}\r\nUrl:{3}", e.Browser, e.Frame, e.HttpStatusCode, e.Url));            
+            WriteLog(String.Format("{4}:\r\nBrowser: {0}\r\nFrame: {1}\r\nStatusCode: {2}\r\nUrl:{3}", e.Browser, e.Frame, e.HttpStatusCode, e.Url, System.Reflection.MethodBase.GetCurrentMethod().Name));
+            //hasta que no este cargado el DOM no se pueden ejecutar funciones javaScrip            
+            this.ExecuteJavaScript("showFromCS","{\"Name\":\"Salva\"}");
+            
         }
+
+       
 
         private void browser_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
         {
-            WriteLog(String.Format("FrameLoadStart:\r\nBrowser: {0}\r\nFrame: {1}\r\nUrl:{2}", e.Browser, e.Frame, e.Url));            
+            WriteLog(String.Format("{3}:\r\nBrowser: {0}\r\nFrame: {1}\r\nUrl:{2}", e.Browser, e.Frame, e.Url,System.Reflection.MethodBase.GetCurrentMethod().Name));            
         }
 
         private void browser_Initialized(object sender, EventArgs e)
@@ -64,22 +96,19 @@ namespace CefSharp
 
         private void browser_Loaded(object sender, RoutedEventArgs e)
         {
-            WriteLog(String.Format("Loaded:\r\nHandled: {0}\r\nOriginalSource: {1}\r\nRoutedEvent: {2}\r\nSource:{3}", e.Handled, e.OriginalSource, e.RoutedEvent, e.Source));
-        }
+            WriteLog(String.Format("{4}:\r\nHandled: {0}\r\nOriginalSource: {1}\r\nRoutedEvent: {2}\r\nSource:{3}", e.Handled, e.OriginalSource, e.RoutedEvent, e.Source, System.Reflection.MethodBase.GetCurrentMethod().Name));            
+        }        
 
         private void browser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
-
             try
             {
-                WriteLog(String.Format("LoadingStateChanged:\r\nBrowser: {0}\r\nCanGoBack. {1}\r\nCanGoForward: {2}\r\nCanReload: {3}\r\nIsLoading: {4}", e.Browser, e.CanGoBack, e.CanGoForward, e.CanReload, e.IsLoading));
+                WriteLog(String.Format("{5}:\r\nBrowser: {0}\r\nCanGoBack. {1}\r\nCanGoForward: {2}\r\nCanReload: {3}\r\nIsLoading: {4}", e.Browser, e.CanGoBack, e.CanGoForward, e.CanReload, e.IsLoading, System.Reflection.MethodBase.GetCurrentMethod().Name));
 
                 this.Dispatcher.Invoke(
                     () =>
                     {
-                    lbStatus.Content = browser.IsLoading ? "loading..." : "loaded";
-
-                if (browser.IsLoaded) browser.ShowDevTools();
+                    lbStatus.Content = browser.IsLoading ? "loading..." : "loaded";                
             });
 
             }
@@ -92,8 +121,12 @@ namespace CefSharp
 
         private void browser_StatusMessage(object sender, StatusMessageEventArgs e)
         {
-            WriteLog(String.Format("StatusMessage:\r\nBrowser: {0}\r\nValue: {1}", e.Browser, e.Value));            
+            WriteLog(String.Format("{2}:\r\nBrowser: {0}\r\nValue: {1}", e.Browser, e.Value, System.Reflection.MethodBase.GetCurrentMethod().Name));            
         }
+
+        #endregion
+
+        #region MENU EVENTS
 
         private void tbBrowser_KeyUp(object sender, KeyEventArgs e)
         {
@@ -103,6 +136,51 @@ namespace CefSharp
             {
                 browser.Address = tbBrowser.Text;
             }
+        }
+
+        private void DevTools_Click(object sender, RoutedEventArgs e)
+        {
+            this.ShowDevTools();
+        }
+
+        private void ShowDevTools()
+        {
+            WriteLog(String.Format("{0}...", System.Reflection.MethodBase.GetCurrentMethod().Name));
+            if (browser.IsLoaded) browser.ShowDevTools();
+        }        
+
+        private void StartTest_Click(object sender, RoutedEventArgs e)
+        {
+            this.StartHtmlTest();
+        }
+
+        private void StartHtmlTest()
+        {
+            WriteLog(String.Format("{0}", System.Reflection.MethodBase.GetCurrentMethod().Name));
+            string myHtml = File.ReadAllText("HtmlTest.html");
+            browser.LoadHtml(myHtml, "http://www.example.com/");
+        }
+
+        #endregion
+
+       
+    }
+
+    public class MyNetObject
+    {
+        public string Name { get; private set; }
+        public int Age { get; private set; }
+        public string WebName { get; private set; }
+
+        public MyNetObject(string name, int age, string webName)
+        {
+            this.Name = name;
+            this.Age = age;
+            this.WebName = webName;
+        }
+        public void showData()
+        {
+            MessageBox.Show(String.Format("{0}\r\tName: {1}\r\n\tAge: {2}",this.WebName, this.Name, this.Age));
         }
     }
 }
