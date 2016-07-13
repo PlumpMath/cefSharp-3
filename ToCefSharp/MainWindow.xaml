@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="{Binding Path=Title, ElementName=browser, Converter={StaticResource TitleConverter}}"
         Height="350" Width="525"
-        Loaded="Window_Loaded" WindowState="Maximized">
+        Loaded="Window_Loaded" WindowState="Maximized" WindowStyle="None">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
