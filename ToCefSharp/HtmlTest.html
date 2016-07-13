@@ -23,6 +23,10 @@
             document.getElementById("fromCS").innerHTML=data.Name;
         }
 
+        function loginTexyon(email, pass) {
+            yo.loginTexyon(email, pass);
+        }
+
     </script>
 </head>
 
@@ -39,6 +43,16 @@
     <p id="fromCS"></p>
 
     <input type="button" value="And now click here!!" onclick="showDataObject()"/>
+
+    <input id="email" type="email" />
+
+    <input id="password" type="password"/>
+
+    <input id="loginTX" type="button" value="Login Texyon" onclick="loginTexyon(document.getElementById('email').value,document.getElementById('password').value)"/>
+
+    <a href="http://www.texyon.com">Texyon</a>
+
+    <a href="http://www.texyon.com" target="_blank">Texyon</a>
 
 </body>
 

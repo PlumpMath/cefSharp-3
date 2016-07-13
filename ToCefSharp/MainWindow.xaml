@@ -32,7 +32,7 @@
                                     Initialized="browser_Initialized" 
                                     Loaded="browser_Loaded" 
                                     LoadingStateChanged="browser_LoadingStateChanged" 
-                                    StatusMessage="browser_StatusMessage" IsBrowserInitializedChanged="browser_IsBrowserInitializedChanged"/>
+                                    StatusMessage="browser_StatusMessage" IsBrowserInitializedChanged="browser_IsBrowserInitializedChanged" SourceUpdated="browser_SourceUpdated" GiveFeedback="browser_GiveFeedback"/>
 
         <StatusBar Grid.Row="2" Visibility="Collapsed">
                         

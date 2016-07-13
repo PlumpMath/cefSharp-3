@@ -22,7 +22,7 @@ namespace CefSharp
             InitializeComponent();
             var obj = this.CreateNetObject();
             //el registro se debe efectuar antes de inicializar le cefSharp. No se puede hacer en el win_loaded
-            this.RegisterJsObjecte(obj);
+            this.RegisterJsObjecte(obj);            
         }
 
         private Object CreateNetObject()
@@ -161,9 +161,18 @@ namespace CefSharp
             browser.LoadHtml(myHtml, "http://www.example.com/");
         }
 
+
         #endregion
 
-       
+        private void browser_SourceUpdated(object sender, System.Windows.Data.DataTransferEventArgs e)
+        {
+            WriteLog(String.Format("{0}:\r\n\t{1}", System.Reflection.MethodBase.GetCurrentMethod().Name,e.ToString()));
+        }
+
+        private void browser_GiveFeedback(object sender, GiveFeedbackEventArgs e)
+        {
+            WriteLog(String.Format("{0}:\r\n\t{1}", System.Reflection.MethodBase.GetCurrentMethod().Name, e.ToString()));
+        }
     }
 
     public class MyNetObject
@@ -180,7 +189,12 @@ namespace CefSharp
         }
         public void showData()
         {
-            MessageBox.Show(String.Format("{0}\r\tName: {1}\r\n\tAge: {2}",this.WebName, this.Name, this.Age));
+            MessageBox.Show(String.Format("{0}\r\n\tName: {1}\r\n\tAge: {2}\r\n",this.WebName, this.Name, this.Age));
+        }
+
+        public void loginTexyon(string email, string password)
+        {
+            MessageBox.Show(String.Format("Email: {0}\r\nPassword: {1}", email,password));
         }
     }
 }
