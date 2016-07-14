@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -18,16 +19,30 @@ namespace CefSharp
 
         public MainWindow()
         {
+            WriteLog(String.Format("{0}", System.Reflection.MethodBase.GetCurrentMethod().Name));
             InitializeComponent();
             //browser.RequestHandler = new RequestHandler();                  
             var obj = this.CreateNetObject();
             //el registro se debe efectuar antes de inicializar le cefSharp. No se puede hacer en el win_loaded
             this.RegisterJsObject(obj);            
         }
-
         private Object CreateNetObject()
         {
-            return new MyNetObject("Voro", 31,"yo");
+            WriteLog(String.Format("{0}", System.Reflection.MethodBase.GetCurrentMethod().Name));
+            return new MyNetObject("Voro", 31, "yo");
+        }
+
+        private void RegisterJsObject(dynamic myNetObject)
+        {
+            WriteLog(String.Format("{0}", System.Reflection.MethodBase.GetCurrentMethod().Name));
+            try
+            {
+                browser.RegisterAsyncJsObject(myNetObject.WebName, myNetObject, true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -37,6 +52,7 @@ namespace CefSharp
 
         private void ExecuteJavaScript(string methodName,string jsonData)
         {
+            WriteLog(String.Format("{0}", System.Reflection.MethodBase.GetCurrentMethod().Name));
             //TODO 13/07/2016: pasar un array de objetos como argumento en vez de un json. De todas formas, si se va a pasar
             //un objeto, igual vale la pena serializarlo y pasarselo a la web como json
             try
@@ -50,17 +66,7 @@ namespace CefSharp
             
         }
 
-        private void RegisterJsObject(dynamic myNetObject)
-        {
-            try
-            {
-                browser.RegisterAsyncJsObject(myNetObject.WebName, myNetObject, true);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }            
-        }
+       
 
         #region BROWSER EVENTS
 
@@ -88,7 +94,7 @@ namespace CefSharp
 
         private void browser_Initialized(object sender, EventArgs e)
         {
-            WriteLog(String.Format("Initialized: {0}", sender.ToString()));            
+            WriteLog(String.Format("{0}", System.Reflection.MethodBase.GetCurrentMethod().Name));
         }
 
         private void browser_Loaded(object sender, RoutedEventArgs e)
@@ -164,13 +170,11 @@ namespace CefSharp
         private void StartHtmlTest()
         {
             WriteLog(String.Format("{0}", System.Reflection.MethodBase.GetCurrentMethod().Name));
-            string myHtml = File.ReadAllText("HtmlTest.html");
+            string myHtml = File.ReadAllText("../../../HtmlTest.html");
             browser.LoadHtml(myHtml, "http://www.example.com/");
             //browser.Address = "http://wwww.texyon.com";
             
         }
-
-
 
         #endregion
 
@@ -179,6 +183,11 @@ namespace CefSharp
         private void GoForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {            
             e.CanExecute = (browser!=null) && browser.CanGoForward;
+        }       
+
+        private void GoForward_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            browser.Forward();
         }
 
         private void GoBack_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -186,14 +195,30 @@ namespace CefSharp
             e.CanExecute = (browser != null) && browser.CanGoBack;
         }
 
-        private void GoForward_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            browser.Forward();
-        }
-
         private void GoBack_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             browser.Back();
+        }        
+
+        private void ExecuteAsyncScript_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (browser == null || String.IsNullOrEmpty(browser.Address))
+            {
+                e.CanExecute = false;
+            }else
+            {
+                e.CanExecute = true;
+            }            
+        }
+
+        private void ExecuteAsyncScript_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.ExecuteScriptAsync();
+        }
+
+        private async void ExecuteScriptAsync()
+        {
+            await Task.Run(()=>browser.ExecuteScriptAsync("doDelay(15000)"));
         }
 
         #endregion
@@ -220,18 +245,46 @@ namespace CefSharp
         {
             MessageBox.Show(String.Format("Email: {0}\r\nPassword: {1}", email,password));
         }
+
+        public async void showTime()
+        {
+
+            await Task.Run(()=>
+            {
+                Console.WriteLine("{0} started at {1}.", System.Reflection.MethodBase.GetCurrentMethod().Name, DateTime.Now);
+                var date = DateTime.Now;
+                int a = 1;
+                int b = 0;
+                while (a != 0)
+                {                    
+                    var now = DateTime.Now;
+                    var dif = now.TimeOfDay - date.TimeOfDay;
+                    if ( dif.Seconds>= 20)
+                    {                        
+                        a=0;
+                    }
+                }
+                Console.WriteLine("{0} finished at {1}.", System.Reflection.MethodBase.GetCurrentMethod().Name,DateTime.Now);             
+            });
+            
+        }
     }
     
     public static class Commands
     {
         public static readonly RoutedUICommand GoForward = new RoutedUICommand(
-            "fasdfa",
-            "asdfadsf",
+            "Puedo ir a la siguiente página?",
+            "Redirege a la página siguiente",
             typeof(Commands));
 
         public static readonly RoutedUICommand GoBack = new RoutedUICommand(
-           "asdf",
-           "asdfa",
+           "Puedo ir a la página anterior?",
+           "Redirege a la página anterior",
+           typeof(Commands));
+
+        public static readonly RoutedUICommand ExecuteAsyncScript = new RoutedUICommand(
+           "Puedo ejecutar un script de forma async?",
+           "Ejecuta un script de forma async",
            typeof(Commands));
     }   
 }

@@ -7,7 +7,7 @@
         xmlns:cromium="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
         Title="{Binding Path=Title, ElementName=browser, Converter={StaticResource TitleConverter}}"
-        Height="350" Width="525"
+        Height="350" MinWidth="600" Width="Auto" 
         Loaded="Window_Loaded" WindowState="Maximized">
 
     <Window.CommandBindings>
@@ -15,7 +15,9 @@
         <CommandBinding Command="local:Commands.GoForward" CanExecute="GoForward_CanExecute" Executed="GoForward_Executed"/>
         
         <CommandBinding Command="local:Commands.GoBack" CanExecute="GoBack_CanExecute" Executed="GoBack_Executed"/>
-    
+
+        <CommandBinding Command="local:Commands.ExecuteAsyncScript" CanExecute="ExecuteAsyncScript_CanExecute" Executed="ExecuteAsyncScript_Executed"/>
+
     </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -24,14 +26,16 @@
             <RowDefinition Height="Auto"/>            
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0">
+        <DockPanel Grid.Row="0" Height="Auto">
             
-            <Button x:Name="DevTools" Content="DevTools" Click="DevTools_Click" Width="100"/>
+            <Button x:Name="DevTools" Content="DevTools" Click="DevTools_Click" Width="Auto"/>
 
-            <Button x:Name="StartTest" Content="StartTest" Click="StartTest_Click" Width="100"/>
+            <Button x:Name="StartTest" Content="StartTest" Click="StartTest_Click" Width="Auto"/>
 
-            <Button Content="Next" Width="50" DockPanel.Dock="Right" Command="local:Commands.GoForward" />
-            <Button Content="Back" Width="50" DockPanel.Dock="Right" Command="local:Commands.GoBack"/>
+            <Button Content="Next" Width="Auto" DockPanel.Dock="Right" Command="local:Commands.GoForward" />
+            <Button Content="Back" Width="Auto" DockPanel.Dock="Right" Command="local:Commands.GoBack"/>
+
+            <Button Content="Execute Script Async" Width="Auto" DockPanel.Dock="Right" Command="local:Commands.ExecuteAsyncScript"/>            
 
             <TextBox x:Name="tbBrowser" Background="Black" Foreground="White" CaretBrush="White" KeyUp="tbBrowser_KeyUp" FontWeight="Bold" FontSize="14" />
 

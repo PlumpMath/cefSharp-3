@@ -1,64 +1,142 @@
-﻿<!DOCTYPE html>
+﻿
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
     <meta charset="utf-8" />
 
     <title>Test cefSharp</title>
-
     <script>
 
         function showDate() {
             document.getElementById("date").innerHTML = Date();
         }
 
-        function showDataObject() {
+        function showData() {
             yo.showData();
         }
 
         function showFromCS(data) {
-            var obj=JSON.stringify(data);
-            
-            document.getElementById("fromCS").innerHTML=data.Name;
+            var obj = JSON.stringify(data);
+
+            document.getElementById("fromCS").innerHTML = data.Name;
         }
 
         function loginTexyon(email, pass) {
             yo.loginTexyon(email, pass);
         }
 
+        function showTime() {
+            yo.showTime();
+        }
+
+        function doDelay() {
+            var date = new Date();
+            var startDate = date.getTime();
+            var a = 1;
+            while (a !== 0) {
+                date = new Date();
+                if ((date.getTime() - startDate) >= 20000) {
+                    a = 0;
+                }
+            }
+
+            alert("Salida del bucle.");
+        }
+
     </script>
+    <style>
+
+        body{
+            background-color:dimgrey;
+        }
+
+        h1{
+            background-color:yellow;
+            color:black;
+            text-align:center;
+        }
+
+        h2{
+            color:blue;
+        }
+
+        p{
+            font-family:Verdana;
+            font-size:15px;
+            text-align:justify;
+            margin:5px;
+            padding:5px;
+            border-color:red;
+            border-width:thin;
+            border-style:dashed;
+        }
+
+        div{
+            margin:10px;            
+            border-color:black;
+            border-width:medium;
+            border-style:solid;
+        }
+
+        a{
+            margin:5px;
+        }
+
+        input{
+            margin:10px;
+        }
+
+
+        
+    </style>
 </head>
 
 <body>
 
     <h1>Hello world!!!</h1>
 
-    <p>This is a test for CefSharp</p>
+    <h2>This is a test for CefSharp</h2>
 
-    <p id="date"></p>
+    <div>
+        <p id="date"></p>
 
-    <input type="button" value="Click here!!" onclick="showDate()"/>
+        <input type="button" value="Click here!!" onclick="showDate()" />
+    </div>
 
-    <p id="fromCS"></p>
+    <div>
+        <input type="button" value="And now click here!!" onclick="showData()" />
 
-    <input type="button" value="And now click here!!" onclick="showDataObject()"/>
+        <p>I show that form c#:</p>
+        
+        <p id="fromCS"></p>
 
-    <input id="email" type="email" />
+    </div>
 
-    <input id="password" type="password"/>
+    <div>
 
-    <input id="loginTX" type="button" value="Login Texyon" onclick="loginTexyon(document.getElementById('email').value,document.getElementById('password').value)"/>
+        <input id="email" type="email" />
 
-    <a href="http://www.texyon.com">Texyon</a>
+        <input id="password" type="password" />
 
-    <a href="http://www.texyon.com" target="_blank">Texyon</a>
+        <input id="loginTX" type="button" value="Login Texyon" onclick="loginTexyon(document.getElementById('email').value,document.getElementById('password').value)" />
 
-    <a href="http://www.texyon.com" target="_parent">Texyon</a>
+    </div>
 
-    <a href="http://www.texyon.com" target="_self">Texyon</a>
+    <div>
 
-    <a href="http://www.texyon.com" target="_top">Texyon</a>
+        <a href="http://www.texyon.com"> Open Texyon web here</a>
+
+        <a href="http://www.texyon.com" target="_blank">Open Texyon web in other WPF</a>
+
+    </div>
+
+    <div>
+
+        <input type="button" value="Execute .net method method" onclick="showTime()" />
+    
+    </div>
+
 
 </body>
 
