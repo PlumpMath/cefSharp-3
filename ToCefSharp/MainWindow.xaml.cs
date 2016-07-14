@@ -11,7 +11,7 @@ namespace CefSharp
     /// </summary>
     public partial class MainWindow : Window
     {
-        private void WriteLog(string message)
+        public static void WriteLog(string message)
         {
             Console.WriteLine(message);
             Console.WriteLine("---------------------------------------");
@@ -21,6 +21,7 @@ namespace CefSharp
         {
             WriteLog(String.Format("{0}", System.Reflection.MethodBase.GetCurrentMethod().Name));
             InitializeComponent();
+            browser.JsDialogHandler = new JsDialogHandler();
             //browser.RequestHandler = new RequestHandler();                  
             var obj = this.CreateNetObject();
             //el registro se debe efectuar antes de inicializar le cefSharp. No se puede hacer en el win_loaded

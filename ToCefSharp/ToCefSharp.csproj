@@ -103,6 +103,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Browser\JsDialogHandler.cs" />
+    <Compile Include="Browser\LifeSpanHandler.cs" />
     <Compile Include="Browser\RequestHandler.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
