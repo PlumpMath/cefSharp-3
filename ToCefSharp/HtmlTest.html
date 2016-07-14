@@ -36,12 +36,19 @@
             var a = 1;
             while (a !== 0) {
                 date = new Date();
-                if ((date.getTime() - startDate) >= 20000) {
+                if ((date.getTime() - startDate) >= 5000) {
                     a = 0;
                 }
             }
 
             alert("Salida del bucle.");
+        }
+
+        function suma() {
+            var a = document.getElementById("firstNumber").value;
+            var b = document.getElementById("secondNumber").value;
+            doDelay();
+            return parseInt(a) + parseInt(b);
         }
 
     </script>
@@ -104,12 +111,13 @@
         <input type="button" value="Click here!!" onclick="showDate()" />
     </div>
 
-    <div>
-        <input type="button" value="And now click here!!" onclick="showData()" />
+    <div>        
 
         <p>I show that form c#:</p>
         
-        <p id="fromCS"></p>
+        <p id="fromCS" ></p>
+
+        <input type="button" value="And now click here!!" onclick="showData()" />
 
     </div>
 
@@ -133,7 +141,12 @@
 
     <div>
 
-        <input type="button" value="Execute .net method method" onclick="showTime()" />
+        <input type="button" value="Execute .net method async" onclick="showTime()" />
+
+        <div>
+            <input id="firstNumber" type="number" />
+            <input id="secondNumber" type="number"/>
+        </div>
     
     </div>
 

@@ -183,6 +183,7 @@ namespace CefSharp
         private void GoForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {            
             e.CanExecute = (browser!=null) && browser.CanGoForward;
+            if(btForward!=null) btForward.IsEnabled = e.CanExecute;
         }       
 
         private void GoForward_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -193,6 +194,7 @@ namespace CefSharp
         private void GoBack_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = (browser != null) && browser.CanGoBack;
+            if(btBack!=null) btBack.IsEnabled = e.CanExecute;
         }
 
         private void GoBack_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -208,7 +210,9 @@ namespace CefSharp
             }else
             {
                 e.CanExecute = true;
-            }            
+            }
+            if(btScriptAsync!=null)btScriptAsync.IsEnabled = e.CanExecute;
+            if(btScript!=null) btScript.IsEnabled = e.CanExecute;        
         }
 
         private void ExecuteAsyncScript_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -219,6 +223,37 @@ namespace CefSharp
         private async void ExecuteScriptAsync()
         {
             await Task.Run(()=>browser.ExecuteScriptAsync("doDelay(15000)"));
+        }
+
+        private void ExecuteScript_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.ExecuteScript();
+        }
+
+        private void ExecuteScript()
+        {
+            //browser.ExecuteScriptAsync("doDelay()");                   
+
+            var task = browser.EvaluateScriptAsync("suma()") ;
+            task.ContinueWith((t)=>
+            {
+                var response = t.Result;
+                if(response.Success && response.Result != null)
+                {
+                    try
+                    {
+                        Type type = response.Result.GetType();
+                        var res = (int)response.Result;
+                        Console.WriteLine("{0} --> result: {1}", System.Reflection.MethodBase.GetCurrentMethod().Name, res);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }                    
+                }
+
+            },TaskScheduler.FromCurrentSynchronizationContext());
+            task.Wait();
         }
 
         #endregion
@@ -254,7 +289,6 @@ namespace CefSharp
                 Console.WriteLine("{0} started at {1}.", System.Reflection.MethodBase.GetCurrentMethod().Name, DateTime.Now);
                 var date = DateTime.Now;
                 int a = 1;
-                int b = 0;
                 while (a != 0)
                 {                    
                     var now = DateTime.Now;
@@ -286,5 +320,10 @@ namespace CefSharp
            "Puedo ejecutar un script de forma async?",
            "Ejecuta un script de forma async",
            typeof(Commands));
+
+        public static readonly RoutedUICommand ExecuteScript = new RoutedUICommand(
+          "Puedo ejecutar un script?",
+          "Ejecuta un script",
+          typeof(Commands));
     }   
 }

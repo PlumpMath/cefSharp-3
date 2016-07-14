@@ -9,6 +9,17 @@
         Title="{Binding Path=Title, ElementName=browser, Converter={StaticResource TitleConverter}}"
         Height="350" MinWidth="600" Width="Auto" 
         Loaded="Window_Loaded" WindowState="Maximized">
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Green"/>
+            <Setter Property="FontWeight" Value="DemiBold"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="Red"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
 
     <Window.CommandBindings>
         
@@ -17,6 +28,8 @@
         <CommandBinding Command="local:Commands.GoBack" CanExecute="GoBack_CanExecute" Executed="GoBack_Executed"/>
 
         <CommandBinding Command="local:Commands.ExecuteAsyncScript" CanExecute="ExecuteAsyncScript_CanExecute" Executed="ExecuteAsyncScript_Executed"/>
+
+        <CommandBinding Command="local:Commands.ExecuteScript" CanExecute="ExecuteAsyncScript_CanExecute" Executed="ExecuteScript_Executed"/>
 
     </Window.CommandBindings>
     <Grid>
@@ -32,10 +45,12 @@
 
             <Button x:Name="StartTest" Content="StartTest" Click="StartTest_Click" Width="Auto"/>
 
-            <Button Content="Next" Width="Auto" DockPanel.Dock="Right" Command="local:Commands.GoForward" />
-            <Button Content="Back" Width="Auto" DockPanel.Dock="Right" Command="local:Commands.GoBack"/>
+            <Button x:Name="btForward" Content="Next" Width="Auto" DockPanel.Dock="Right" Command="local:Commands.GoForward" />
+            <Button x:Name="btBack" Content="Back" Width="Auto" DockPanel.Dock="Right" Command="local:Commands.GoBack"/>
 
-            <Button Content="Execute Script Async" Width="Auto" DockPanel.Dock="Right" Command="local:Commands.ExecuteAsyncScript"/>            
+            <Button x:Name="btScriptAsync" Content="Execute Script Async" Width="Auto" DockPanel.Dock="Right" Command="local:Commands.ExecuteAsyncScript"/>
+
+            <Button x:Name="btScript" Content="Execute Script" Width="Auto" DockPanel.Dock="Right" Command="local:Commands.ExecuteScript"/>
 
             <TextBox x:Name="tbBrowser" Background="Black" Foreground="White" CaretBrush="White" KeyUp="tbBrowser_KeyUp" FontWeight="Bold" FontSize="14" />
 
